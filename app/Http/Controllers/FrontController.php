@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class FrontController extends Controller
@@ -103,14 +104,23 @@ class FrontController extends Controller
         ]));
     }
 
+    public function category(Category $category)
+    {
+        // Fetch all categories
+        $categories = \App\Models\Category::all();
+
+        // Fetch a random banner advertisement
+        $bannerads = \App\Models\BannerAdvertisement::where('is_active', 'active')
+            ->where('type', 'banner')
+            ->inRandomOrder()
+            ->first();
+
+        return view('front.category', compact('category', 'categories', 'bannerads'));
+    }
+
     public function details($slug)
     {
         return view('front.details', compact('slug'));
-    }
-
-    public function category($slug)
-    {
-        return view('front.category', compact('slug'));
     }
 
     public function author($slug)
