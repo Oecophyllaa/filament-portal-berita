@@ -21,6 +21,8 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-folder-open';
 
+    protected static ?string $navigationGroup = 'Articles';
+
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationBadge(): ?string

@@ -19,6 +19,8 @@ class BannerAdvertisementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
+    protected static ?string $navigationGroup = 'Articles';
+
     protected static ?int $navigationSort = 3;
 
     public static function getNavigationBadge(): ?string

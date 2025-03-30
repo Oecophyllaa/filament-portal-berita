@@ -19,6 +19,8 @@ class ArticleNewsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
+    protected static ?string $navigationGroup = 'Articles';
+
     protected static ?int $navigationSort = 4;
 
     public static function getNavigationBadge(): ?string
