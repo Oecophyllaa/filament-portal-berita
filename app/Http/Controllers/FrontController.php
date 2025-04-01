@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Author;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -118,18 +119,35 @@ class FrontController extends Controller
         return view('front.category', compact('category', 'categories', 'bannerads'));
     }
 
-    public function details($slug)
+    public function author(Author $author)
     {
-        return view('front.details', compact('slug'));
-    }
-
-    public function author($slug)
-    {
-        return view('front.author', compact('slug'));
+        $categories = \App\Models\Category::all();
+        $bannerads = \App\Models\BannerAdvertisement::where('is_active', 'active')
+            ->where('type', 'banner')
+            ->inRandomOrder()
+            ->first();
+        return view('front.author', compact('author', 'categories', 'bannerads'));
     }
 
     public function search(Request $request)
     {
-        return view('front.search', ['query' => $request->input('query')]);
+        $request->validate([
+            'keyword' => ['required', 'string', 'max:255'],
+        ]);
+
+        $categories = \App\Models\Category::all();
+
+        $keyword = $request->input('keyword');
+
+        $articles = \App\Models\ArticleNews::with(['category', 'author'])
+            ->where('name', 'like', '%' . $keyword . '%')
+            ->paginate(6);
+
+        return view('front.search', compact('articles', 'keyword', 'categories'));
+    }
+
+    public function details($slug)
+    {
+        return view('front.details', compact('slug'));
     }
 }
