@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArticleNews;
 use App\Models\Author;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -146,8 +147,45 @@ class FrontController extends Controller
         return view('front.search', compact('articles', 'keyword', 'categories'));
     }
 
-    public function details($slug)
+    public function details(ArticleNews $articleNews)
     {
-        return view('front.details', compact('slug'));
+        // Fetch all categories
+        $categories = \App\Models\Category::all();
+
+        // Fetch latest articles
+        $articles = \App\Models\ArticleNews::with(['category'])
+            ->where('is_featured', 'not_featured')
+            ->where('id', '!=', $articleNews->id)
+            ->latest()
+            ->take(3)
+            ->get();
+
+        // Fetch a random banner advertisement
+        $bannerads = \App\Models\BannerAdvertisement::where('is_active', 'active')
+            ->where('type', 'banner')
+            ->inRandomOrder()
+            ->first();
+
+        $square_ads = \App\Models\BannerAdvertisement::where('is_active', 'active')
+            ->where('type', 'square')
+            ->inRandomOrder()
+            ->take(2)
+            ->get();
+
+        if ($square_ads->count() < 2) {
+            $square_ads_1 = $square_ads->first();
+            $square_ads_2 = $square_ads->first();
+        } else {
+            $square_ads_1 = $square_ads->get(0);
+            $square_ads_2 = $square_ads->get(1);
+        }
+
+        $author_news = \App\Models\ArticleNews::where('author_id', $articleNews->author_id)
+            ->where('id', '!=', $articleNews->id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
+
+        return view('front.details', compact('articleNews', 'categories', 'articles', 'bannerads', 'square_ads_1', 'square_ads_2', 'author_news'));
     }
 }
